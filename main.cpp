@@ -3,7 +3,7 @@
 #include <vector>
 #include "suggestion.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     if (argc < 2) {
         std::cerr << "Write path filename with <line_by_line_suggestion>" << std::endl;
         return 1;
