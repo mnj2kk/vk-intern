@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "Write path filename with <line_by_line_suggestion>" << std::endl;
         return 1;
     }
-    auto* ptr = new InvertedSuggestion;
+    auto *ptr = new InvertedSuggestion;
     std::vector <std::pair <std::vector <Suggestion>, std::string> > suggestion;
     std::ifstream in(argv[1]);
     if (!in) {
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
             continue;
         }
         std::cout << "I find " << result.size() << " suggestion for you:" << std::endl;
-        for (const auto & index : result) {
+        for (const size_t &index : result) {
             std::cout << suggestion[index].second << std::endl;
         }
     }

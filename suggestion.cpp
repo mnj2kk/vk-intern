@@ -5,8 +5,8 @@
 #include "suggestion.h"
 
 void InvertedSuggestion::add(const std::string &word, const size_t &id) {
-    InvertedSuggestion* node = this;
-    for (const char& value : word) {
+    InvertedSuggestion *node = this;
+    for (const char &value : word) {
         if (!node->next_link_.contains(value))
             node->next_link_.insert({ value, new InvertedSuggestion });
         node = node->next_link_[value];
@@ -16,8 +16,8 @@ void InvertedSuggestion::add(const std::string &word, const size_t &id) {
 }
 
 InvertedSuggestion *InvertedSuggestion::find(const std::string &prefix) {
-    InvertedSuggestion* node = this;
-    for (const char& value : prefix) {
+    InvertedSuggestion *node = this;
+    for (const char &value : prefix) {
         if (!node->next_link_.contains(value))
             return nullptr;
         node = node->next_link_[value];
@@ -30,13 +30,13 @@ InvertedSuggestion::~InvertedSuggestion() {
         delete second;
 }
 
-void trim_string(std::string& str) {
+void trim_string(std::string &str) {
     while (!str.empty() && (ispunct(str.back()) || str.back() == '\n' || str.back() == '\r' || str.back() == '\t'))
         str.pop_back();
 }
 
-bool cmp(std::pair <std::vector <Suggestion>, std::string>& first_,
-         std::pair <std::vector <Suggestion>, std::string>& second_) {
+bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
+         std::pair <std::vector <Suggestion>, std::string> &second_) {
     size_t index = 0;
     while (index < std::min(first_.first.size(), second_.first.size())) {
         if (first_.first[index].population_ > second_.first[index].population_) {
@@ -56,8 +56,8 @@ bool cmp(std::pair <std::vector <Suggestion>, std::string>& first_,
     return index == first_.first.size();
 }
 
-void build(std::istream& in, std::vector <std::pair <
-        std::vector <Suggestion>, std::string> >& suggestion, InvertedSuggestion* node) {
+void build(std::istream &in, std::vector <std::pair <
+        std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node) {
     std::string line, word;
     std::unordered_map <std::string, unsigned int> word_count;
     while (std::getline(in, line)) {
@@ -72,7 +72,7 @@ void build(std::istream& in, std::vector <std::pair <
         }
     }
     for (auto &[first, second] : suggestion) {
-        for (Suggestion& value : first) {
+        for (Suggestion &value : first) {
             value.population_ = word_count[value.word_];
         }
     }
@@ -80,21 +80,21 @@ void build(std::istream& in, std::vector <std::pair <
     build(suggestion, node);
 }
 
-void build(std::vector <std::pair <std::vector <Suggestion>, std::string> >& suggestion, InvertedSuggestion* node) {
+void build(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node) {
     for (size_t i = 0; i < suggestion.size(); i++) {
-        for (const Suggestion& value : suggestion[i].first) {
+        for (const Suggestion &value : suggestion[i].first) {
             node->add(value.word_, i);
         }
     }
 }
 
-bool intersect(const std::vector<const std::vector<size_t>*>& suggest, std::vector<size_t>& top_result) {
+bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vector<size_t> &top_result) {
     if (suggest.empty()) return false;
     top_result = *suggest[0];
     for (size_t i = 1; i < suggest.size(); i++) {
         size_t index = 0;
         std::vector <size_t> new_result;
-        for (auto value : *suggest[i]) {
+        for (const size_t &value : *suggest[i]) {
             while (index < top_result.size() && top_result[index] < value) index++;
             if (index != top_result.size() && value == top_result[index]) new_result.emplace_back(value);
         }
@@ -104,16 +104,16 @@ bool intersect(const std::vector<const std::vector<size_t>*>& suggest, std::vect
     return !top_result.empty();
 }
 
-bool search(const std::vector<Suggestion>& input, std::vector<size_t>& result, InvertedSuggestion* node) {
-    std::vector <const std::vector <size_t>*> suggest;
-    for (const Suggestion& value : input) {
-        auto* ptr = node->find(value.word_);
+bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, InvertedSuggestion *node) {
+    std::vector <const std::vector <size_t> *> suggest;
+    for (const Suggestion &value : input) {
+        auto *ptr = node->find(value.word_);
         if (!ptr) return false;
-        suggest.push_back( &ptr->ids_ );
+        suggest.push_back(&ptr->ids_);
     }
     std::vector <size_t> res;
     if (!intersect(suggest, res)) return false;
-    for (size_t& value : res) {
+    for (const size_t &value : res) {
         result.emplace_back(value);
     }
     return true;

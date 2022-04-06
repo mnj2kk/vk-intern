@@ -33,23 +33,23 @@ public:
     std::map <char, InvertedSuggestion*> next_link_;
     std::vector <size_t> ids_;
 
-    void add(const std::string& word, const size_t& id);
+    void add(const std::string &word, const size_t &id);
 
-    InvertedSuggestion* find(const std::string& prefix);
+    InvertedSuggestion *find(const std::string &prefix);
 
     ~InvertedSuggestion();
 };
 
-void trim_string(std::string& str);
+void trim_string(std::string &str);
 
-bool cmp(std::pair <std::vector <Suggestion>, std::string>& first_,
-         std::pair <std::vector <Suggestion>, std::string>& second_);
+bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
+         std::pair <std::vector <Suggestion>, std::string> &second_);
 
-void build(std::istream& in, std::vector <std::pair <
-        std::vector <Suggestion>, std::string> >& suggestion, InvertedSuggestion* node);
+void build(std::istream &in, std::vector <std::pair <
+        std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node);
 
-void build(std::vector <std::pair <std::vector <Suggestion>, std::string> >& suggestion, InvertedSuggestion* node);
+void build(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node);
 
-bool search(const std::vector<Suggestion>& input, std::vector<size_t>& result, InvertedSuggestion* node);
+bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, InvertedSuggestion *node);
 
-bool intersect(const std::vector <const std::vector <size_t>*>& suggest, std::vector <size_t>& top_result);
+bool intersect(const std::vector <const std::vector <size_t> *> &suggest, std::vector <size_t> &top_result);
