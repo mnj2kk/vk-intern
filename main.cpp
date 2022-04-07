@@ -17,8 +17,9 @@ int main(int argc, char *argv[]) {
         delete ptr;
         return 1;
     }
+    std::vector <Suggestion> dictionary;
     std::cerr << "Adding suggestion.." << std::endl;
-    build(in, suggestion, ptr); // загрузка логов
+    build(in, suggestion, dictionary, ptr); // загрузка логов
     in.close(); // закрытие файла
     std::cerr << "Successfully added " << suggestion.size() << " suggestion!" << std::endl;
     std::string line, word;

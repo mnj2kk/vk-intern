@@ -29,7 +29,7 @@ public:
     size_t population_; // сколько раз оно встречается
 
     // Конструктор нашего класса
-    Suggestion(std::string &word, std::u16string word16 , size_t x) :
+    Suggestion(std::string word, std::u16string word16 , size_t x) :
         word_(std::move(word)), word16_(std::move(word16)), population_(x) {}
 
     // Дефолтный деструктор
@@ -69,8 +69,8 @@ bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
          std::pair <std::vector <Suggestion>, std::string> &second_);
 
 // Создание нашего датасета на основе логов
-void build(std::istream &in, std::vector <std::pair <
-        std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node);
+void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
+           std::vector <Suggestion> &dictionary,  InvertedSuggestion *node);
 
 // Добавление наших запросов в бор
 void build(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node);

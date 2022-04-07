@@ -83,8 +83,8 @@ std::string convert_u8(const std::u16string &source) {
     return convert.to_bytes(source);
 }
 
-void build(std::istream &in, std::vector <std::pair <
-        std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node) {
+void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
+           std::vector <Suggestion> &dictionary, InvertedSuggestion *node) {
     std::string line, word;
     std::unordered_map <std::string, unsigned int> word_count;
     while (std::getline(in, line)) {
@@ -100,6 +100,10 @@ void build(std::istream &in, std::vector <std::pair <
             else ++word_count[word];
             suggestion.back().first.emplace_back(word, convert_u16(word), 0);
         }
+    }
+    // Заполнение словаря
+    for (const auto &[first, second] : word_count) {
+        dictionary.emplace_back(first, convert_u16(first), second);
     }
     // заполнение кол-во вхождений слов в логи
     for (auto &[first, second] : suggestion) {
