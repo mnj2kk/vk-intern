@@ -27,7 +27,8 @@ int main(int argc, char *argv[]) {
         while (std::getline(parse, word, ' ')) {
             trim_string(word);
             if (word.empty()) continue;
-            input.emplace_back(word, 0);
+            to_lower(word);
+            input.emplace_back(word, convert_u16(word), 0);
         }
         if (!search(input, result, ptr)) {
             std::cout << "Nothing to suggest.." << std::endl;
