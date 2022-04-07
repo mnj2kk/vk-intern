@@ -4,6 +4,7 @@
 
 #include "suggestion.h"
 
+// Реализация добавления нашего префикса в бор
 void InvertedSuggestion::add(const std::u16string &word, const size_t &id) {
     InvertedSuggestion *node = this;
     for (const char16_t &value : word) {
@@ -15,6 +16,7 @@ void InvertedSuggestion::add(const std::u16string &word, const size_t &id) {
     }
 }
 
+// Реализация поиска префикса (в случае отсутствия возвращает nullptr)
 InvertedSuggestion *InvertedSuggestion::find(const std::u16string &prefix) {
     InvertedSuggestion *node = this;
     for (const char16_t &value : prefix) {
@@ -25,6 +27,7 @@ InvertedSuggestion *InvertedSuggestion::find(const std::u16string &prefix) {
     return node;
 }
 
+// Деструктор класса
 InvertedSuggestion::~InvertedSuggestion() {
     for (auto &[first, second] : next_link_)
         delete second;
@@ -33,7 +36,7 @@ InvertedSuggestion::~InvertedSuggestion() {
 void to_lower(std::string &str) {
     std::u16string str16 = convert_u16(str);
     for (char16_t &value : str16) {
-        if (value >= 1040 && value <= 1071) {
+        if (value >= 1040 && value <= 1071) { // int(char) для заглавных русских букв
             value += 32;
         } else {
             value = tolower(value);
@@ -43,10 +46,12 @@ void to_lower(std::string &str) {
 }
 
 void trim_string(std::string &str) {
+    // Удаление пунктуации и перевода строки
     while (!str.empty() && (ispunct(str.back()) || str.back() == '\n' || str.back() == '\r' || str.back() == '\t'))
         str.pop_back();
 }
 
+// Компаратор работает в точности как написано в README.md
 bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
          std::pair <std::vector <Suggestion>, std::string> &second_) {
     size_t index = 0;
@@ -83,23 +88,26 @@ void build(std::istream &in, std::vector <std::pair <
     std::string line, word;
     std::unordered_map <std::string, unsigned int> word_count;
     while (std::getline(in, line)) {
+        trim_string(line);
+        if (line.empty()) continue; // пропуск пустых строчек
         std::stringstream parse(line);
         suggestion.emplace_back(std::vector <Suggestion> (), line);
         while (std::getline(parse, word, ' ')) {
             trim_string(word);
-            if (word.empty()) continue;
+            if (word.empty()) continue; // пропуск двойных пробелов
             to_lower(word);
             if (!word_count.contains(word)) word_count.insert({ word, 1 });
             else ++word_count[word];
-            suggestion.back().first.emplace_back(Suggestion(word, convert_u16(word), 0));
+            suggestion.back().first.emplace_back(word, convert_u16(word), 0);
         }
     }
+    // заполнение кол-во вхождений слов в логи
     for (auto &[first, second] : suggestion) {
         for (Suggestion &value : first) {
             value.population_ = word_count[value.word_];
         }
     }
-    sort(suggestion.begin(), suggestion.end(), cmp);
+    sort(suggestion.begin(), suggestion.end(), cmp); // сортировка наших логов, по приоритету
     build(suggestion, node);
 }
 
@@ -127,6 +135,7 @@ bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vec
     return !top_result.empty();
 }
 
+// поиск нужны нам id
 bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, InvertedSuggestion *node) {
     std::vector <const std::vector <size_t> *> suggest;
     for (const Suggestion &value : input) {
