@@ -61,7 +61,9 @@ int main(int argc, char *argv[]) {
     std::vector <std::vector <int> > source(1, std::vector <int> (DEPTH + 1));
     for (size_t i = 0; i <= DEPTH; i++) source[0][i] = i;
 
-    while (std::getline(std::cin, line)) {
+    auto index = 0;
+
+    while (std::getline(in, line)) {
         if (line.empty()) break;
         std::vector <size_t> result;
         std::vector <Suggestion> input;
