@@ -1,12 +1,11 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include "suggestion.h"
 
-const std::u16string u16_empty = convert_u16("");
+const auto u16_empty = convert_u16("");
 
 // Допущение 3 ошибок в написании
-std::pair <std::u16string, int> find_with_corrects(InvertedSuggestion *ptr, const std::u16string &str,
+std::pair <std::u16string, int> find_with_corrects(Trie *ptr, const std::u16string &str,
                                                    std::u16string &current_ans, char16_t p,
                                                    std::vector <std::vector <int> > &source) {
     std::pair <std::u16string, int> u16_return(u16_empty, 4);
@@ -37,7 +36,7 @@ int main(int argc, char *argv[]) {
         std::cerr << "Write path filename with <line_by_line_suggestion>" << std::endl;
         return 1;
     }
-    auto *ptr = new InvertedSuggestion; // создание бора
+    auto *ptr = new Trie; // создание бора
     std::vector <std::pair <std::vector <Suggestion>, std::string> > suggestion;
     std::ifstream in(argv[1]); // открытие файла с логами
     if (!in) { // проверка на корректность открытие файла и выдача ошибки, в случае некорректности

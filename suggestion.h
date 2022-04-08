@@ -37,19 +37,19 @@ public:
 };
 
 // Класс обратных индексов, который для чара хранит индексы где он встречается, а так же является бором
-class InvertedSuggestion {
+class Trie {
 public:
-    std::map <char16_t, InvertedSuggestion *> next_link_; // указатели на следующие вершины в боре
+    std::map <char16_t, Trie *> next_link_; // указатели на следующие вершины в боре
     std::vector <size_t> ids_; // список запросов, где встречается данный префикс
 
     // Функция добавления префикса в бор
     void add(const std::u16string &word, const size_t &id);
 
     // Функция для поиска заданного префикса в боре
-    InvertedSuggestion *find(const std::u16string &prefix);
+    Trie *find(const std::u16string &prefix);
 
     // Деструктор класса
-    ~InvertedSuggestion();
+    ~Trie();
 };
 
 // Функция для конвертации нашей строки из UTF-8 -> UTF-16
@@ -68,15 +68,15 @@ void trim_string(std::string &str);
 bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
          std::pair <std::vector <Suggestion>, std::string> &second_);
 
-// Создание нашего датасета на основе логов
+// Создание нашего бора на основе логов
 void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
-           std::vector <Suggestion> &dictionary,  InvertedSuggestion *node, size_t &DEPTH);
+           std::vector <Suggestion> &dictionary, Trie *node, size_t &DEPTH);
 
 // Добавление наших запросов в бор
-void build(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node);
+void add_logs(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, Trie *node);
 
 // Поиск подсказок для нашего запроса
-bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, InvertedSuggestion *node);
+bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, Trie *node);
 
 // Пересечение получившихся индексов
 bool intersect(const std::vector <const std::vector <size_t> *> &suggest, std::vector <size_t> &top_result);

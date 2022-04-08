@@ -5,41 +5,41 @@
 #include "suggestion.h"
 
 // Реализация добавления нашего префикса в бор
-void InvertedSuggestion::add(const std::u16string &word, const size_t &id) {
-    InvertedSuggestion *node = this;
-    for (const char16_t &value : word) {
-        if (!node->next_link_.contains(value))
-            node->next_link_.insert({ value, new InvertedSuggestion });
-        node = node->next_link_[value];
+void Trie::add(const std::u16string &word, const size_t &id) {
+    Trie *node = this;
+    for (const char16_t &item : word) {
+        if (!node->next_link_.contains(item))
+            node->next_link_.insert({ item, new Trie });
+        node = node->next_link_[item];
         if (node->ids_.empty() || node->ids_.back() != id)
             node->ids_.push_back(id);
     }
 }
 
 // Реализация поиска префикса (в случае отсутствия возвращает nullptr)
-InvertedSuggestion *InvertedSuggestion::find(const std::u16string &prefix) {
-    InvertedSuggestion *node = this;
-    for (const char16_t &value : prefix) {
-        if (!node->next_link_.contains(value))
+Trie *Trie::find(const std::u16string &prefix) {
+    Trie *node = this;
+    for (const char16_t &item : prefix) {
+        if (!node->next_link_.contains(item))
             return nullptr;
-        node = node->next_link_[value];
+        node = node->next_link_[item];
     }
     return node;
 }
 
 // Деструктор класса
-InvertedSuggestion::~InvertedSuggestion() {
+Trie::~Trie() {
     for (auto &[first, second] : next_link_)
         delete second;
 }
 
 void to_lower(std::string &str) {
     std::u16string str16 = convert_u16(str);
-    for (char16_t &value : str16) {
-        if (value >= 1040 && value <= 1071) { // int(char) для заглавных русских букв
-            value += 32;
+    for (char16_t &item : str16) {
+        if (item >= 1040 && item <= 1071) { // int(char) для заглавных русских букв
+            item += 32;
         } else {
-            value = tolower(value);
+            item = tolower(item);
         }
     }
     str = std::move(convert_u8(str16));
@@ -84,7 +84,7 @@ std::string convert_u8(const std::u16string &source) {
 }
 
 void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
-           std::vector <Suggestion> &dictionary, InvertedSuggestion *node, size_t &DEPTH) {
+           std::vector <Suggestion> &dictionary, Trie *node, size_t &DEPTH) {
     std::string line, word;
     std::unordered_map <std::string, unsigned int> word_count;
     while (std::getline(in, line)) {
@@ -108,18 +108,18 @@ void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, s
     }
     // заполнение кол-во вхождений слов в логи
     for (auto &[first, second] : suggestion) {
-        for (Suggestion &value : first) {
-            value.population_ = word_count[value.word_];
+        for (Suggestion &item : first) {
+            item.population_ = word_count[item.word_];
         }
     }
     sort(suggestion.begin(), suggestion.end(), cmp); // сортировка наших логов, по приоритету
-    build(suggestion, node);
+    add_logs(suggestion, node);
 }
 
-void build(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node) {
+void add_logs(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, Trie *node) {
     for (size_t i = 0; i < suggestion.size(); i++) {
-        for (const Suggestion &value : suggestion[i].first) {
-            node->add(value.word16_, i);
+        for (const Suggestion &item : suggestion[i].first) {
+            node->add(item.word16_, i);
         }
     }
 }
@@ -130,9 +130,9 @@ bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vec
     for (size_t i = 1; i < suggest.size(); i++) {
         size_t index = 0;
         std::vector <size_t> new_result;
-        for (const size_t &value : *suggest[i]) {
-            while (index < top_result.size() && top_result[index] < value) index++;
-            if (index != top_result.size() && value == top_result[index]) new_result.emplace_back(value);
+        for (const size_t &item : *suggest[i]) {
+            while (index < top_result.size() && top_result[index] < item) index++;
+            if (index != top_result.size() && item == top_result[index]) new_result.emplace_back(item);
         }
         top_result = std::move(new_result);
     }
@@ -141,17 +141,17 @@ bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vec
 }
 
 // поиск нужны нам id
-bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, InvertedSuggestion *node) {
+bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, Trie *node) {
     std::vector <const std::vector <size_t> *> suggest;
-    for (const Suggestion &value : input) {
-        auto *ptr = node->find(value.word16_);
+    for (const Suggestion &item : input) {
+        auto *ptr = node->find(item.word16_);
         if (!ptr) return false;
         suggest.push_back(&ptr->ids_);
     }
     std::vector <size_t> res;
     if (!intersect(suggest, res)) return false;
-    for (const size_t &value : res) {
-        result.emplace_back(value);
+    for (const size_t &item : res) {
+        result.emplace_back(item);
     }
     return true;
 }
