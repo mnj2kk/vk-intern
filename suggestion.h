@@ -21,6 +21,12 @@
 // Константа поддерживающая максимальное кол-во возвращаемых запросов
 const size_t TOP_SUGGEST = 5;
 
+// Константа пустой строки
+
+const std::string u8_empty;
+
+const std::u16string u16_empty;
+
 // Класс хранящий слово, слово в UTF-16 и кол-во раз сколько оно встречается в тексте, для дальнейшей сортировки
 class Suggestion {
 public:
@@ -80,3 +86,8 @@ bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, T
 
 // Пересечение получившихся индексов
 bool intersect(const std::vector <const std::vector <size_t> *> &suggest, std::vector <size_t> &top_result);
+
+// Поиск слова с ближайшим расстоянием Дамерау-Левенштейна
+std::pair <std::u16string, int> find_with_corrects(Trie *ptr, const std::u16string &str,
+                                                   std::u16string &current_ans, char16_t p,
+                                                   std::vector <std::vector <int> > &source);

@@ -160,3 +160,36 @@ bool search(const std::vector<Suggestion> &input, std::vector<size_t> &result, T
     }
     return true;
 }
+
+// Допущение 2 ошибок с помощью Дамерау-Левенштейна
+std::pair <std::u16string, int> find_with_corrects(Trie *ptr, const std::u16string &str,
+                                                   std::u16string &current_ans, char16_t p,
+                                                   std::vector <std::vector <int> > &source) {
+    std::pair <std::u16string, int> u16_return(u16_empty, 3);
+    if (p != '\0') {
+        current_ans += p;
+        size_t i = current_ans.size();
+        source[i][0] = (int) i;
+        for (size_t j = 1; j <= str.size(); j++) {
+            if (i > 1 && j > 1 && str[j - 1] == current_ans[i - 2] && str[j - 2] == current_ans[i - 1]) {
+                source[i][j] = std::min(source[i - 1][j] + 1, std::min(source[i][j - 1] + 1,
+                                   std::min(source[i - 2][j - 2] + 1,
+                                            source[i - 1][j - 1] + (str[j - 1] != current_ans[i - 1]))));
+            } else {
+                source[i][j] = std::min(source[i - 1][j] + 1,
+                                        std::min(source[i][j - 1] + 1,
+                                                 source[i - 1][j - 1] + (str[j - 1] != current_ans[i - 1])));
+            }
+        }
+        if (source[i][str.size()] < u16_return.second) {
+            u16_return = {current_ans, source[i][str.size()]};
+        }
+    }
+    for (auto &[first, second] : ptr->next_link_) {
+        auto item = find_with_corrects(second, str, current_ans, first, source);
+        if (u16_return.second > item.second) u16_return = item;
+    }
+    if (p != '\0')
+        current_ans.pop_back();
+    return u16_return;
+}
