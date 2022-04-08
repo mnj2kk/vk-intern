@@ -47,7 +47,7 @@ void to_lower(std::string &str) {
 
 void trim_string(std::string &str) {
     // Удаление пунктуации и перевода строки
-    while (!str.empty() && (ispunct(str.back()) || str.back() == '\n' || str.back() == '\r' || str.back() == '\t'))
+    while (!str.empty() && (ispunct(str.back()) || isspace(str.back())))
         str.pop_back();
 }
 
