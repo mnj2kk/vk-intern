@@ -57,7 +57,11 @@ int main(int argc, char *argv[]) {
     in.open(argv[1]);
     std::string line, word;
     auto verdict = true;
-    while (std::getline(in, line)) {
+
+    std::vector <std::vector <int> > source(1, std::vector <int> (DEPTH + 1));
+    for (size_t i = 0; i <= DEPTH; i++) source[0][i] = i;
+
+    while (std::getline(std::cin, line)) {
         if (line.empty()) break;
         std::vector <size_t> result;
         std::vector <Suggestion> input;
@@ -67,13 +71,16 @@ int main(int argc, char *argv[]) {
             if (word.empty()) continue;
             to_lower(word);
             auto str = convert_u16(word), ans = u16_empty;
-            std::vector <std::vector <int> > source(DEPTH + 1, std::vector <int> (str.size() + 1));
-            for (size_t j = 0; j <= str.size(); j++) source[0][j] = (int) j;
+            while (source.size() < str.size() + 1) {
+                source.emplace_back(source.back());
+                source.back()[0] = source.size() - 1;
+            }
             auto item = find_with_corrects(ptr, str, ans, '\0', source);
             if (item.first != u16_empty) word = convert_u8(item.first);
             input.emplace_back(word, convert_u16(word), 0);
         }
-        if (!input.empty() && !search(input, result, ptr)) {
+        if (input.empty()) continue;
+        if (!search(input, result, ptr)) {
             verdict = false;
             break;
         }
