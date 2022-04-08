@@ -133,6 +133,7 @@ bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vec
         }
         top_result = std::move(new_result);
     }
+    top_result.resize(std::min(TOP_SUGGEST, top_result.size()));
     return !top_result.empty();
 }
 
@@ -159,21 +160,20 @@ std::pair <std::u16string, int> find_with_corrects(Trie *ptr, const std::u16stri
     std::pair <std::u16string, int> u16_return(u16_empty, 3);
     if (p != '\0') {
         current_ans += p;
-        size_t i = current_ans.size();
-        source[i][0] = (int) i;
-        for (size_t j = 1; j <= str.size(); j++) {
-            if (i > 1 && j > 1 && str[j - 1] == current_ans[i - 2] && str[j - 2] == current_ans[i - 1]) {
+        size_t j = current_ans.size();
+        for (size_t i = 1; i <= str.size(); i++) {
+            if (i > 1 && j > 1 && str[i - 1] == current_ans[j - 2] && str[i - 2] == current_ans[j - 1]) {
                 source[i][j] = std::min(source[i - 1][j] + 1, std::min(source[i][j - 1] + 1,
                                    std::min(source[i - 2][j - 2] + 1,
-                                            source[i - 1][j - 1] + (str[j - 1] != current_ans[i - 1]))));
+                                            source[i - 1][j - 1] + (str[i - 1] != current_ans[j - 1]))));
             } else {
                 source[i][j] = std::min(source[i - 1][j] + 1,
                                         std::min(source[i][j - 1] + 1,
-                                                 source[i - 1][j - 1] + (str[j - 1] != current_ans[i - 1])));
+                                                 source[i - 1][j - 1] + (str[i - 1] != current_ans[j - 1])));
             }
         }
-        if (source[i][str.size()] < u16_return.second) {
-            u16_return = {current_ans, source[i][str.size()]};
+        if (source[str.size()][j] < u16_return.second) {
+            u16_return = {current_ans, source[str.size()][j]};
         }
     }
     for (auto &[first, second] : ptr->next_link_) {
