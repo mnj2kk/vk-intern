@@ -70,7 +70,7 @@ bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
 
 // Создание нашего датасета на основе логов
 void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
-           std::vector <Suggestion> &dictionary,  InvertedSuggestion *node);
+           std::vector <Suggestion> &dictionary,  InvertedSuggestion *node, size_t &DEPTH);
 
 // Добавление наших запросов в бор
 void build(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, InvertedSuggestion *node);

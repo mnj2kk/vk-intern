@@ -84,7 +84,7 @@ std::string convert_u8(const std::u16string &source) {
 }
 
 void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
-           std::vector <Suggestion> &dictionary, InvertedSuggestion *node) {
+           std::vector <Suggestion> &dictionary, InvertedSuggestion *node, size_t &DEPTH) {
     std::string line, word;
     std::unordered_map <std::string, unsigned int> word_count;
     while (std::getline(in, line)) {
@@ -96,6 +96,7 @@ void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, s
             trim_string(word);
             if (word.empty()) continue; // пропуск двойных пробелов
             to_lower(word);
+            DEPTH = std::max(DEPTH, word.size());
             if (!word_count.contains(word)) word_count.insert({ word, 1 });
             else ++word_count[word];
             suggestion.back().first.emplace_back(word, convert_u16(word), 0);

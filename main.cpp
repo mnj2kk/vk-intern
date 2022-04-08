@@ -3,7 +3,41 @@
 #include <vector>
 #include "suggestion.h"
 
+const std::u16string u16_empty = convert_u16("");
+
+std::vector <std::vector <int> > source(256, std::vector <int> (256));
+
+// Допущение 3 ошибок в написании
+std::pair <std::u16string, int> find_with_corrects(InvertedSuggestion *ptr, const std::u16string &str,
+                                                   std::u16string &current_ans, char16_t p) {
+    std::pair <std::u16string, int> u16_return(u16_empty, 4);
+    if (p != '\0') {
+        current_ans += p;
+        size_t i = current_ans.size();
+        for (size_t j = 1; j <= str.size(); j++) {
+            source[i][j] = std::min(source[i - 1][j] + 1,
+                            std::min(source[i][j - 1] + 1, source[i - 1][j - 1] + (str[j - 1] != current_ans[i - 1])));
+        }
+        if (source[i][str.size()] < u16_return.second) {
+            u16_return = {current_ans, source[i][str.size()]};
+        }
+        if (source[i][str.size()] > source[i - 1][str.size()]) {
+            current_ans.pop_back();
+            return {u16_empty, 4};
+        }
+    }
+    for (auto &[first, second] : ptr->next_link_) {
+        auto item = find_with_corrects(second, str, current_ans, first);
+        if (u16_return.second > item.second) u16_return = item;
+    }
+    if (p != '\0')
+        current_ans.pop_back();
+    return u16_return;
+}
+
 int main(int argc, char *argv[]) {
+    for (size_t i = 0; i < 256; i++) source[i][0] = (int) i;
+    for (size_t j = 0; j < 256; j++) source[0][j] = (int) j;
     // Обработка отсутствия названия файла с логами
     if (argc < 2) {
         std::cerr << "Write path filename with <line_by_line_suggestion>" << std::endl;
@@ -19,7 +53,8 @@ int main(int argc, char *argv[]) {
     }
     std::vector <Suggestion> dictionary;
     std::cerr << "Adding suggestion.." << std::endl;
-    build(in, suggestion, dictionary, ptr); // загрузка логов
+    size_t DEPTH = 0;
+    build(in, suggestion, dictionary, ptr, DEPTH); // загрузка логов
     in.close(); // закрытие файла
     std::cerr << "Successfully added " << suggestion.size() << " suggestion!" << std::endl;
     std::string line, word;
@@ -34,6 +69,10 @@ int main(int argc, char *argv[]) {
             trim_string(word);
             if (word.empty()) continue;
             to_lower(word);
+            auto str = convert_u16(word);
+            std::u16string ans = u16_empty;
+            auto item = find_with_corrects(ptr, str, ans, '\0');
+            if (item.first != u16_empty) word = convert_u8(item.first);
             input.emplace_back(word, convert_u16(word), 0);
         }
         if (!search(input, result, ptr)) {
