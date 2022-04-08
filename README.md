@@ -47,11 +47,13 @@
 
 Примеры работоспособности данного решения:
 
-![Пример работоспособности](https://github.com/mnj2kk/vk-intern/blob/main/test_logs/correct_work_1.png)
+![Пример работоспособности предложенных подсказок](https://github.com/mnj2kk/pictures/blob/main/vk-intern/correct_work_1.png)
 
-![Пример работоспособности](https://github.com/mnj2kk/vk-intern/blob/main/test_logs/correct_work_2.png)
+![Пример работоспособности предложенных подсказок](https://github.com/mnj2kk/pictures/blob/main/vk-intern/correct_work_2.png)
 
-![Пример работоспособности](https://github.com/mnj2kk/vk-intern/blob/main/test_logs/nothing_to_suggest.png)
+![Пример работоспособности исправление слов](https://github.com/mnj2kk/pictures/blob/main/vk-intern/correct_word_misstakes.jpg)
+
+![Пример работоспособности отсутсвия вариантов](https://github.com/mnj2kk/pictures/blob/main/vk-intern/nothing_to_suggest.png)
 
 ## Возможные оптимизации:
 
