@@ -126,15 +126,20 @@ void add_logs(std::vector <std::pair <std::vector <Suggestion>, std::string> > &
 
 bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vector<size_t> &top_result) {
     if (suggest.empty()) return false;
-    top_result = *suggest[0];
-    for (size_t i = 1; i < suggest.size(); i++) {
-        size_t index = 0;
-        std::vector <size_t> new_result;
-        for (const size_t &item : *suggest[i]) {
-            while (index < top_result.size() && top_result[index] < item) index++;
-            if (index != top_result.size() && item == top_result[index]) new_result.emplace_back(item);
+    std::vector <size_t> indexes(suggest.size());
+    std::vector <size_t> MAX_SIZE(suggest.size());
+    for (size_t i = 0; i < suggest.size(); i++) MAX_SIZE[i] = suggest[i]->size();
+    while (indexes[0] < MAX_SIZE[0]) {
+        auto break_flag = false;
+        for (size_t i = 1; i < suggest.size(); i++) {
+            while (indexes[i] < MAX_SIZE[i] && suggest[i][indexes[i]] < suggest[0][indexes[0]]) indexes[i]++;
+            if (!(indexes[i] == MAX_SIZE[i] || suggest[i][indexes[i]] != suggest[0][indexes[0]])) {
+                break_flag = true;
+                break;
+            }
         }
-        top_result = std::move(new_result);
+        if (break_flag) break;
+        top_result.emplace_back((*suggest[0])[indexes[0]++]);
     }
     top_result.resize(std::min(TOP_SUGGEST, top_result.size()));
     return !top_result.empty();
