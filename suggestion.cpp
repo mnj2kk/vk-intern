@@ -83,8 +83,8 @@ std::string convert_u8(const std::u16string &source) {
     return convert.to_bytes(source);
 }
 
-void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
-           std::vector <Suggestion> &dictionary, Trie *node, size_t &DEPTH) {
+void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>,
+            std::string> > &suggestion, Trie *node, size_t &DEPTH) {
     std::string line, word;
     std::unordered_map <std::string, unsigned int> word_count;
     while (std::getline(in, line)) {
@@ -101,10 +101,6 @@ void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, s
             else ++word_count[word];
             suggestion.back().first.emplace_back(word, convert_u16(word), 0);
         }
-    }
-    // Заполнение словаря
-    for (const auto &[first, second] : word_count) {
-        dictionary.emplace_back(first, convert_u16(first), second);
     }
     // заполнение кол-во вхождений слов в логи
     for (auto &[first, second] : suggestion) {
@@ -126,22 +122,17 @@ void add_logs(std::vector <std::pair <std::vector <Suggestion>, std::string> > &
 
 bool intersect(const std::vector<const std::vector<size_t> *> &suggest, std::vector<size_t> &top_result) {
     if (suggest.empty()) return false;
-    std::vector <size_t> indexes(suggest.size());
-    std::vector <size_t> MAX_SIZE(suggest.size());
-    for (size_t i = 0; i < suggest.size(); i++) MAX_SIZE[i] = suggest[i]->size();
-    while (indexes[0] < MAX_SIZE[0]) {
-        auto break_flag = false;
-        for (size_t i = 1; i < suggest.size(); i++) {
-            while (indexes[i] < MAX_SIZE[i] && suggest[i][indexes[i]] < suggest[0][indexes[0]]) indexes[i]++;
-            if (!(indexes[i] == MAX_SIZE[i] || suggest[i][indexes[i]] != suggest[0][indexes[0]])) {
-                break_flag = true;
-                break;
-            }
+    top_result = *suggest[0];
+    for (size_t i = 1; i < suggest.size(); i++) {
+        std::vector <size_t> item = *suggest[i];
+        size_t index = 0;
+        std::vector <size_t> new_result;
+        for (size_t j = 0; j < top_result.size(); j++) {
+            while (index < item.size() && item[index] < top_result[j]) ++index;
+            if (index != item.size() && item[index] == top_result[j]) new_result.emplace_back(top_result[j]);
         }
-        if (break_flag) break;
-        top_result.emplace_back((*suggest[0])[indexes[0]++]);
+        top_result = std::move(new_result);
     }
-    top_result.resize(std::min(TOP_SUGGEST, top_result.size()));
     return !top_result.empty();
 }
 

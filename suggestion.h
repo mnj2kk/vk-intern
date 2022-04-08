@@ -75,8 +75,8 @@ bool cmp(std::pair <std::vector <Suggestion>, std::string> &first_,
          std::pair <std::vector <Suggestion>, std::string> &second_);
 
 // Создание нашего бора на основе логов
-void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion,
-           std::vector <Suggestion> &dictionary, Trie *node, size_t &DEPTH);
+void build(std::istream &in, std::vector <std::pair <std::vector <Suggestion>,
+            std::string> > &suggestion, Trie *node, size_t &DEPTH);
 
 // Добавление наших запросов в бор
 void add_logs(std::vector <std::pair <std::vector <Suggestion>, std::string> > &suggestion, Trie *node);

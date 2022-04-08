@@ -9,17 +9,16 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     auto *ptr = new Trie; // создание бора
-    std::vector <std::pair <std::vector <Suggestion>, std::string> > suggestion;
     std::ifstream in(argv[1]); // открытие файла с логами
     if (!in) { // проверка на корректность открытие файла и выдача ошибки, в случае некорректности
         std::cerr << "Can't open this file" << std::endl;
         delete ptr;
         return 1;
     }
-    std::vector <Suggestion> dictionary;
     std::cerr << "Adding suggestion.." << std::endl;
+    std::vector <std::pair <std::vector <Suggestion>, std::string> > suggestion;
     size_t DEPTH = 0;
-    build(in, suggestion, dictionary, ptr, DEPTH); // загрузка логов
+    build(in, suggestion, ptr, DEPTH); // загрузка логов
     in.close(); // закрытие файла
     std::cerr << "Successfully added " << suggestion.size() << " suggestion!" << std::endl;
     std::string line, word;
