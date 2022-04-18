@@ -9,6 +9,6 @@ set(SRC_LIST
         lib/correcter/correcter.h source/correcter.cpp
         lib/query_generation/query_generation.h source/query_generation.cpp
         lib/solve/solve.h source/solve.cpp
-        auto_test/auto_test.cpp)
+        suggest/suggest.cpp)
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})
