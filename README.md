@@ -64,6 +64,18 @@
 
 Для прекращения ввода подсказок пользователем достаточно ввести пустую строку и ввод прекратится.
 
+## Примеры работоспоспосбности
+
+![Работоспособность подсказок](https://github.com/mnj2kk/pictures/blob/main/vk-intern/correct_suggest.jpg)
+
+![Работоспособность подсказок с исправление запроса](https://github.com/mnj2kk/pictures/blob/main/vk-intern/correct_answer_with_correction.jpg)
+
+![Работоспособность отсутсвия подсказок](https://github.com/mnj2kk/pictures/blob/main/vk-intern/cant_find_something.jpg)
+
+## Примеры работоспособности тестов
+
+![Работоспособность тестов](https://github.com/mnj2kk/pictures/blob/main/vk-intern/auto_test_work.jpg)
+
 ## Возможные оптимизации:
 
 <ol>
