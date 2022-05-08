@@ -16,7 +16,7 @@ std::string prs::convertU8(const std::u16string &source) {
 }
 
 void prs::trim(std::string &str, prs::Type value) {
-    while (!str.empty() && (ispunct(str.back()) || isspace(str.back())))
+    while (!str.empty() && isspace(str.back()))
         str.pop_back();
     if (value == prs::Stay) {
         return;
