@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <string>
 #include "suggestion/suggestion.h"
 #include "parser/parser.h"
 #include "query_generation/query_generation.h"
@@ -45,6 +46,7 @@ int main(int argc, char *argv[]) {
     Engine query_engine(suggestion);
     CheckSuggest stupid_correct(ptr, dictionary);
     Solver stupid_solver(suggestion);
+    bool stop = false;
     for (size_t i = 0; i < TEST_COUNT; i++) {
         auto test = query_engine.get();
         auto my_test_correct = correct(ptr, test, my_correct);
@@ -52,12 +54,18 @@ int main(int argc, char *argv[]) {
         if (test.empty()) {
             continue;
         }
+        std::cerr << i + 1 << ": ";
         if (search(ptr.get(), my_test_correct) != stupid_solver.get_suggest(stupid_test_correct)) {
-            std::cerr << "Incorrect answers. Test number " << i << ": " << std::endl;
-            for (const auto &item: test) {
-                std::cerr << prs::convertU8(item.word16_) << ' ';
-            }
-            std::cerr << std::endl;
+            std::cerr << "[NOT OK] ";
+            stop = true;
+        } else {
+            std::cerr << "[OK] ";
+        }
+        for (const auto &item: test) {
+            std::cerr << prs::convertU8(item.word16_) << ' ';
+        }
+        std::cerr << std::endl;
+        if (stop) {
             return 1;
         }
     }
